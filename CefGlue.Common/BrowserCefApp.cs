@@ -9,12 +9,14 @@ namespace Xilium.CefGlue.Common
     {
         private readonly CefBrowserProcessHandler _browserProcessHandler;
         private readonly KeyValuePair<string, string>[] _flags;
+        private readonly List<string> _args;
 
-        internal BrowserCefApp(CustomScheme[] customSchemes = null, KeyValuePair<string, string>[] flags = null, BrowserProcessHandler browserProcessHandler = null) :
+        internal BrowserCefApp(CustomScheme[] customSchemes = null, List<string> args = null, KeyValuePair<string, string>[] flags = null, BrowserProcessHandler browserProcessHandler = null) :
             base(customSchemes)
         {
             _browserProcessHandler = new CommonBrowserProcessHandler(browserProcessHandler, customSchemes);
             _flags = flags;
+            _args = args;
         }
 
         protected override void OnBeforeCommandLineProcessing(string processType, CefCommandLine commandLine)
@@ -32,8 +34,16 @@ namespace Xilium.CefGlue.Common
                 if (_flags != null)
                 {
                     foreach (var flag in _flags)
-                    {     
+                    {
                         commandLine.AppendSwitch(flag.Key, flag.Value);
+                    }
+                }
+
+                if (_args != null)
+                {
+                    foreach (var arg in _args)
+                    {
+                        commandLine.AppendArgument(arg);
                     }
                 }
             }
